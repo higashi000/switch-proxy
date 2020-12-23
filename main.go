@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"strings"
 
+	"github.com/higashi000/switch-proxy/loadresolv"
 	"github.com/higashi000/switch-proxy/setproxy"
 )
 
@@ -17,5 +20,13 @@ func main() {
 		return
 	}
 
-	setproxy.GitProxy(args[1])
+	search, err := loadresolv.LoadResolv("/etc/resolv.conf")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if strings.Index(search, args[0]) != -1 {
+		setproxy.SetProxy(args[1])
+	}
 }
